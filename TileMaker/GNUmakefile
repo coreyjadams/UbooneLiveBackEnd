@@ -17,7 +17,7 @@ INCFLAGS  = -I.                       #Include itself
 INCFLAGS += $(shell larlite-config --includes)
 INCFLAGS += $(shell python-config --includes)
 INCFLAGS += -I$(shell python -c "import numpy; print numpy.get_include()")
-INCFLAGS += -I..
+INCFLAGS += -IPing++
 
 # platform-specific options
 OSNAME          = $(shell uname -s)
