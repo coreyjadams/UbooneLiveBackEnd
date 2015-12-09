@@ -9,10 +9,9 @@
 #pragma link off all classes;
 #pragma link off all functions;
 
-// #pragma link C++ class evd::RecoBase+;
 
-// #pragma link C++ class std::vector<std::vector<std::pair<float,float> > >+;
-#pragma link C++ class ImageSplitter+;
+#pragma link C++ class png::image+;
+#pragma link C++ class ulbe::ImageSplitter+;
 //ADD_NEW_CLASS ... do not change this line
 #endif
 

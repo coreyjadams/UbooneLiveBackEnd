@@ -17,16 +17,20 @@
 #include <iostream>
 #include <vector>
 
-#include "PingWriter/pngwriter.h"
 
 struct _object;
 typedef _object PyObject;
 
+// #include "png.hpp"
 
-#ifndef __CINT__
+
+// #ifndef __CINT__
 #include "Python.h"
 #include "numpy/arrayobject.h"
-#endif
+// #endif
+
+namespace ulbe {
+
 
 class color{
 public:
@@ -53,7 +57,7 @@ public:
 
   void makeTiles(PyObject *);
 
-  void makeTiles(std::string fileName);
+  // void makeTiles(std::string fileName);
 
   void setDepth(size_t);
 
@@ -79,6 +83,9 @@ private:
   std::vector<float> colorAnchors;
   std::vector<color> colorPoints;
 };
+
+} // ulbe
+
 
 #endif
 /** @} */ // end of doxygen group 
