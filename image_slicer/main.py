@@ -35,7 +35,7 @@ class Tile(object):
     def generate_filename(self, directory=os.getcwd(), prefix='tile',
                           format='png', path=True):
         """Construct and return a filename for this tile."""
-        filename = prefix + '_{row}_{col}.{ext}'.format(
+        filename = prefix + '_{row}-{col}.{ext}'.format(
                       col=self.column-1, row=self.row-1, ext=format)
         if not path:
             return filename
@@ -97,7 +97,7 @@ def validate_image(image, number_tiles):
         raise ValueError('Number of tiles must be between 2 and {} (you \
                           asked for {}).'.format(TILE_LIMIT, number_tiles))
 
-def slice(filename, number_tiles, level=0, save=True):
+def slice(filename, number_tiles, level=0, save=True, prefix=None, outpath=None):
     """
     Split an image into a specified number of tiles.
 
@@ -106,7 +106,9 @@ def slice(filename, number_tiles, level=0, save=True):
        number_tiles (int):  The number of tiles required.
 
     Kwargs:
+       level (int): The depth (zoom) of the current slicing process.
        save (bool): Whether or not to save tiles to disk.
+       outpath (str): Path of output images
 
     Returns:
         Tuple of :class:`Tile` instances.
@@ -123,7 +125,15 @@ def slice(filename, number_tiles, level=0, save=True):
     number = 1
 
     # file prefix:
-    prefix = get_basename(filename)+'_%i'%level
+    if (prefix == None):
+        prefix = get_basename(filename)+'_%i'%level
+    else:
+        prefix = prefix+'_%i'%level
+
+    # if an outpath is specified, use it to specify the folder
+    folder = os.path.dirname(filename)
+    if ( (outpath != None) and (os.path.isdir(outpath) == True) ):
+        folder = outpath
 
     for pos_y in range(0, im_h - rows, tile_h): # -rows for rounding error.
         for pos_x in range(0, im_w - columns, tile_w): # as above.
@@ -138,7 +148,7 @@ def slice(filename, number_tiles, level=0, save=True):
     if save:
         save_tiles(tiles,
                    prefix=prefix,
-                   directory=os.path.dirname(filename))
+                   directory=folder)
     return tuple(tiles)
 
 def save_tiles(tiles, prefix='', directory=os.getcwd(), format='png'):
