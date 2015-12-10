@@ -32,13 +32,13 @@ folder = "/home/cadams/larlite/UserDev/UbooneLiveBackEnd/outputImages/"
 
 # Not informational:
 # Define the maximum x and y distances:
-# _x_max = 1175
-_x_max = 600
-# _y_max = 600
-_y_max = 300
+_x_max = 1175
+# _x_max = 500
+_y_max = 600
+# _y_max = 256
 
 # Number of sublevels to make:
-sublevels = 8
+sublevels = 4
 
 # This defines the official microboone color map, in a way usable by matplotlib colormaps
 cdict = { 'red':  
@@ -89,6 +89,7 @@ reader.goToEvent(0)
 # Fetch the data from the reader and transpose it to get the axes correct
 _orig_array = reader.getArrayByPlane(2)
 _orig_array = np.transpose(_orig_array)
+
 
 print bcolors.OKBLUE, "Done accessing data.  Create baselevel image ...", bcolors.ENDC
 
@@ -188,3 +189,4 @@ for level in xrange(sublevels):
       print bcolors.OKBLUE, "Saving file", _temp_name, " ...", bcolors.ENDC
 
       temp_image.save(folder+_temp_name)
+      print bcolors.OKBLUE, "Done saving file", _temp_name, ".", bcolors.ENDC
