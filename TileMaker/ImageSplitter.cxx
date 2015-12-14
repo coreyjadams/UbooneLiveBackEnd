@@ -145,7 +145,7 @@ void ImageSplitter::testSplit() {
   size_t offset = 1200;
   size_t start_wire = 0;
   // Print out some test info:
-  for (size_t i = start_wire; i < start_wire+3; i++) {
+  for (size_t i = start_wire; i < start_wire + 3; i++) {
     std::cout << imageArray[0]->at(offset + 0 + i * _x_pixels) << ", "
               << imageArray[0]->at(offset + 1 + i * _x_pixels) << ", "
               << imageArray[0]->at(offset + 2 + i * _x_pixels) << ", "
@@ -314,9 +314,21 @@ void ImageSplitter::scaleInPlace(std::vector<float> * inputVec, std::vector<floa
     // outputVec -> at(point) = inputVec->at(point);
     for (size_t y_scale = 0; y_scale < _y_scaling; y_scale ++) {
       for (size_t x_scale = 0; x_scale < _x_scaling; x_scale ++) {
-        outputVec -> at(x_new + x_scale + (y_new+y_scale)*len_new) = inputVec->at(point);
+        outputVec -> at(x_new + x_scale + (y_new + y_scale)*len_new) = inputVec->at(point);
+        if (point == 0 || point == 1200) {
+          std::cout << "Mapping " << point << " to "
+                    << x_new << " + " << x_scale << " + " << "( "
+                    << y_new << " + " << y_scale << ") * " << len_new << " = "
+                    << x_new + x_scale + (y_new + y_scale)*len_new
+                    << "\n\t(" << x << "," << y << ") to (" << x_new + x_scale << ", " << y_new + y_scale << ")"
+                    << std::endl;
+        }
       }
     }
+    // if (point == 1200) {
+    //   exit(-1);
+    // }
+
   }
   return;
 }
