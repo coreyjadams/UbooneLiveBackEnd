@@ -134,7 +134,7 @@ print bcolors.OKBLUE, "Baselevel image created.   \
 _x_dims_original, _y_dims_original = base_image.size
 
 # levelList = [5]
-levelList = [2, 3, 4, 5, 6, 7]
+levelList = [2,3,4,5]
 for level in levelList:
     print bcolors.OKBLUE, "Making images for level ", level, bcolors.ENDC
 
@@ -143,8 +143,8 @@ for level in levelList:
     # # Take the original image and resize it to encompass the entire picture in this view:
     # _this_base_image = base_image.resize((_x_max*n_steps_1d,_y_max*n_steps_1d),Image.ANTIALIAS)
 
-    _x_crop_dim = _x_dims_original / n_steps_1d
-    _y_crop_dim = _y_dims_original / n_steps_1d
+    _x_crop_dim = _x_dims_original / n_steps_1d + 1
+    _y_crop_dim = _y_dims_original / n_steps_1d + 1
 
     total_images = n_steps_1d**2
     n_equal_signs = 25
