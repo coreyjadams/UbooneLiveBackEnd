@@ -40,6 +40,17 @@ void ImageSplitter::setYPixels(size_t pixVal) {
   }
 }
 
+void ImageSplitter::setXScaling(size_t scaleVal) {
+  if (scaleVal < _MAX_SCALING) {
+    _x_scaling = scaleVal;
+  }
+}
+void ImageSplitter::setYScaling(size_t scaleVal) {
+  if (scaleVal < _MAX_SCALING) {
+    _y_scaling = scaleVal;
+  }
+}
+
 PyObject * ImageSplitter::getImageAtPos(size_t level, size_t x_pos, size_t y_pos) {
   PyObject * returnNull = nullptr;
   if (x_pos < pow(2, _base_depth)) {
@@ -47,8 +58,8 @@ PyObject * ImageSplitter::getImageAtPos(size_t level, size_t x_pos, size_t y_pos
       // Convert the wire data to numpy arrays:
       int n_dim = 2;
       int * dims = new int[n_dim];
-      dims[0] = _x_pixels * _x_scaling;
-      dims[1] = _y_pixels * _y_scaling;
+      dims[0] = _y_pixels * _y_scaling;
+      dims[1] = _x_pixels * _x_scaling;
       int data_type = PyArray_FLOAT;
 
       // Get the pointer to vector:
@@ -64,7 +75,7 @@ PyObject * ImageSplitter::getImageAtPos(size_t level, size_t x_pos, size_t y_pos
              ((*imageArray.at(_image_index))[0]) );
     }
   }
-  else{
+  else {
     return returnNull;
   }
 }
@@ -77,7 +88,7 @@ bool ImageSplitter::acceptInput(const std::vector<float> & inputVec,
   // size_t min_points = _x_pixels * _y_pixels * pow(2, 2 * _base_depth);
   size_t n_images = pow(2, 2 * _base_depth);
   size_t n_images_per_axes = pow(2, _base_depth);
-  size_t n_pixels_per_image = _x_pixels * _y_pixels;
+  size_t n_pixels_per_image = _x_pixels * _y_pixels;  //( x is time ticks, y is wires)
 
   // Make sure there is enough space to write out these images:
   imageArray.resize(n_images);
@@ -121,12 +132,36 @@ void ImageSplitter::testSplit() {
   // for (auto & image : imageArray){
   //   std::cout << "Image length is " << image->size() << std::endl;
   // }
-  size_t i = 0, offset = 0;
-  while (i < 25) {
-    std::cout << i << ": " << imageArray.at(85)->at(i + offset) << "\n";
-    i++;
+  // size_t i = 0, offset = 0;
+  // while (i < 25) {
+  //   std::cout << i << ": " << imageArray.at(85)->at(i + offset) << "\n";
+  //   i++;
+  // }
+  // std::cout << "Total number of images: " << imageArray.size() << std::endl;
+
+  std::cout << "x pixels: " << _x_pixels << std::endl;
+  std::cout << "y pixels: " << _y_pixels << std::endl;
+
+  size_t offset = 1200;
+  size_t start_wire = 0;
+  // Print out some test info:
+  for (size_t i = start_wire; i < start_wire+3; i++) {
+    std::cout << imageArray[0]->at(offset + 0 + i * _x_pixels) << ", "
+              << imageArray[0]->at(offset + 1 + i * _x_pixels) << ", "
+              << imageArray[0]->at(offset + 2 + i * _x_pixels) << ", "
+              << imageArray[0]->at(offset + 3 + i * _x_pixels) << ", "
+              << imageArray[0]->at(offset + 4 + i * _x_pixels) << ", "
+              << imageArray[0]->at(offset + 5 + i * _x_pixels) << ", "
+              << imageArray[0]->at(offset + 6 + i * _x_pixels) << ", "
+              << imageArray[0]->at(offset + 7 + i * _x_pixels) << ", "
+              << imageArray[0]->at(offset + 8 + i * _x_pixels) << ", "
+              << imageArray[0]->at(offset + 9 + i * _x_pixels) << ", "
+              << std::endl;
   }
-  std::cout << "Total number of images: " << imageArray.size() << std::endl;
+
+
+
+  return;
 }
 
 // void makeTiles(std::string fileName){
@@ -271,9 +306,15 @@ void ImageSplitter::scaleInPlace(std::vector<float> * inputVec, std::vector<floa
     y = point / _x_pixels;
     // Write this point to the output vector with the correct scaling.
     // Since x points are adjacent in memory loop over y on the outside
+    size_t x_new, y_new;
+    x_new = x * _x_scaling;
+    y_new = y * _y_scaling;
+    size_t len_new = _x_pixels * _x_scaling;
+
+    // outputVec -> at(point) = inputVec->at(point);
     for (size_t y_scale = 0; y_scale < _y_scaling; y_scale ++) {
       for (size_t x_scale = 0; x_scale < _x_scaling; x_scale ++) {
-        outputVec -> at(x + x_scale + (_y_pixels * _y_scaling) * (y + y_scale)) = inputVec->at(point);
+        outputVec -> at(x_new + x_scale + (y_new+y_scale)*len_new) = inputVec->at(point);
       }
     }
   }
@@ -311,8 +352,8 @@ void ImageSplitter::spiltAndScale(std::vector<float> * inputVec,
       }
     }
 
-    x = point % (_x_pixels/2);
-    y = point / (_x_pixels/2);
+    x = point % (_x_pixels / 2);
+    y = point / (_x_pixels / 2);
     // Write this point to the output vector with the correct scaling.
     // Since x points are adjacent in memory loop over y on the outside
     for (size_t y_scale = 0; y_scale <  2; y_scale ++) {
@@ -327,6 +368,7 @@ void ImageSplitter::spiltAndScale(std::vector<float> * inputVec,
 
 void ImageSplitter::mergeAndScale(std::vector<std::vector<float> * > inputVecs,
                                   std::vector<float> * outputVec) {
+  std::cout << "Entering merge and scale" << std::endl;
   // This one, at least, is easy.  We take the input vectors and simply average them.
   // Then scale the output vector as needed.
   for (size_t point = 0; point < inputVecs.front()->size(); point ++) {

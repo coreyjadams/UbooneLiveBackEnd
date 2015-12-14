@@ -60,6 +60,9 @@ public:
   void setXPixels(size_t);
   void setYPixels(size_t);
 
+  void setXScaling(size_t);
+  void setYScaling(size_t);
+
   bool acceptInput(const std::vector<float> &, size_t x_len, size_t y_len);
 
   PyObject * getImageAtPos(size_t level, size_t x_pos, size_t y_pos);
@@ -79,6 +82,7 @@ private:
 
   const static size_t _MAX_DEPTH = 8;
   const static size_t _MAX_PIXELS = 2000;
+  const static size_t _MAX_SCALING = 6;
 
   const color & getColor(float);
 
